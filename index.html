@@ -585,6 +585,33 @@
             box-shadow: 0 0 0 2px #ea580c;
         }
     </style>
+    <script>
+        // Simple function to send email via mailto link
+        function sendEmail() {
+            // Get values by ID: name, email, service, details
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const service = document.getElementById('service').value;
+            const details = document.getElementById('details').value;
+            
+            // Construct email subject
+            const subject = encodeURIComponent(`New Inquiry from ${name}`);
+            
+            // Construct email body
+            const body = encodeURIComponent(
+                `Name: ${name}\n` +
+                `Email: ${email}\n` +
+                `Service Type: ${service}\n\n` +
+                `Project Details:\n${details}`
+            );
+            
+            // Construct the mailto link
+            const mailtoLink = `mailto:nanaka.king@exlingo.com?subject=${subject}&body=${body}`;
+            
+            // Force the window to open the link
+            window.location.href = mailtoLink;
+        }
+    </script>
 </head>
 <body class="washi-bg text-black antialiased" itemscope itemtype="https://schema.org/WebPage">
     <!-- Navigation -->
@@ -904,8 +931,8 @@
                 </div>
 
                 <div>
-                    <label for="service-type" class="block text-black mb-3 font-medium" data-i18n="contact.serviceType">Service Type</label>
-                    <select id="service-type" class="w-full px-5 py-4 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 text-black bg-white">
+                    <label for="service" class="block text-black mb-3 font-medium" data-i18n="contact.serviceType">Service Type</label>
+                    <select id="service" class="w-full px-5 py-4 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 text-black bg-white">
                         <option value="" data-i18n="contact.selectService">Select a service...</option>
                         <option value="interpreting" data-i18n="contact.interpreting">Interpreting</option>
                         <option value="translation" data-i18n="contact.translation">Translation</option>
@@ -914,12 +941,12 @@
                 </div>
 
                 <div>
-                    <label for="project-details" class="block text-black mb-3 font-medium" data-i18n="contact.projectDetails">Project Details</label>
-                    <textarea id="project-details" rows="6" class="w-full px-5 py-4 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 resize-none text-black"></textarea>
+                    <label for="details" class="block text-black mb-3 font-medium" data-i18n="contact.projectDetails">Project Details</label>
+                    <textarea id="details" rows="6" class="w-full px-5 py-4 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 resize-none text-black"></textarea>
                 </div>
 
                 <div class="pt-2">
-                    <button type="button" id="sendBtn"
+                    <button type="button" onclick="sendEmail()"
                         class="w-full md:w-auto button-primary hover:opacity-90 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2.5 justify-center">
                         <span data-i18n="contact.sendMessage">Send Message</span>
                         <i data-lucide="send" class="w-5 h-5"></i>
@@ -1168,7 +1195,7 @@
             });
 
             // Update form options
-            const serviceSelect = document.getElementById('service-type');
+            const serviceSelect = document.getElementById('service');
             if (serviceSelect) {
                 const options = serviceSelect.querySelectorAll('option');
                 if (options.length >= 4) {
@@ -1182,8 +1209,8 @@
             // Update form labels
             const nameLabel = document.querySelector('label[for="name"]');
             const emailLabel = document.querySelector('label[for="email"]');
-            const serviceLabel = document.querySelector('label[for="service-type"]');
-            const detailsLabel = document.querySelector('label[for="project-details"]');
+            const serviceLabel = document.querySelector('label[for="service"]');
+            const detailsLabel = document.querySelector('label[for="details"]');
             
             if (nameLabel && nameLabel.getAttribute('data-i18n')) nameLabel.textContent = translations[lang].contact.name;
             if (emailLabel && emailLabel.getAttribute('data-i18n')) emailLabel.textContent = translations[lang].contact.email;
@@ -1271,47 +1298,6 @@
             });
         });
 
-        // Contact Button Click Handler
-        document.getElementById('sendBtn')?.addEventListener('click', function() {
-            console.log('Button clicked');
-            
-            // Get values from the inputs
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const serviceType = document.getElementById('service-type').value;
-            const projectDetails = document.getElementById('project-details').value;
-            
-            // Encode them using encodeURIComponent()
-            const encodedName = encodeURIComponent(name);
-            const encodedEmail = encodeURIComponent(email);
-            const encodedServiceType = encodeURIComponent(serviceType);
-            const encodedProjectDetails = encodeURIComponent(projectDetails);
-            
-            // Construct email subject
-            const subject = encodeURIComponent(`New Inquiry from ${name}`);
-            
-            // Construct email body with all information
-            const body = encodeURIComponent(
-                `Name: ${name}\n` +
-                `Email: ${email}\n` +
-                `Service Type: ${serviceType}\n\n` +
-                `Project Details:\n${projectDetails}`
-            );
-            
-            // Create the mailto: string
-            const mailtoLink = `mailto:nanaka.king@exlingo.com?subject=${subject}&body=${body}`;
-            
-            // Open the email using window.location.href
-            window.location.href = mailtoLink;
-            
-            // Clear form fields after opening email client
-            setTimeout(() => {
-                document.getElementById('name').value = '';
-                document.getElementById('email').value = '';
-                document.getElementById('service-type').value = '';
-                document.getElementById('project-details').value = '';
-            }, 100);
-        });
     </script>
 </body>
 </html>
