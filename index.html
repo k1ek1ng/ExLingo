@@ -1276,35 +1276,38 @@
         });
 
         // Form Submission - Open mailto link with pre-filled information
-        document.querySelector('form')?.addEventListener('submit', function(e) {
+        function handleContactFormSubmit(e) {
+            // Prevent the default form submission
             e.preventDefault();
             
-            // Get form values
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
+            // Grab values from form inputs
+            const name = document.getElementById('name').value.trim();
             const serviceType = document.getElementById('service-type').value;
-            const projectDetails = document.getElementById('project-details').value;
+            const projectDetails = document.getElementById('project-details').value.trim();
             
-            // Create email subject and body with all information
-            const subject = encodeURIComponent(`Contact Form Inquiry - ${serviceType}`);
+            // Construct email subject
+            const subject = encodeURIComponent(`New Inquiry from ${name}`);
+            
+            // Construct email body with Service Type and Project Details clearly formatted
             const body = encodeURIComponent(
-                `Name: ${name}\n` +
-                `Email: ${email}\n` +
                 `Service Type: ${serviceType}\n\n` +
                 `Project Details:\n${projectDetails}`
             );
             
-            // Create mailto link
+            // Construct mailto link
             const mailtoLink = `mailto:nanaka.king@exlingo.com?subject=${subject}&body=${body}`;
             
-            // Open email client immediately
+            // Open the user's default email client
             window.location.href = mailtoLink;
             
             // Reset form after opening email client
             setTimeout(() => {
                 e.target.reset();
             }, 100);
-        });
+        }
+        
+        // Trigger function when 'Send Message' button is clicked
+        document.querySelector('form[name="contact"]')?.addEventListener('submit', handleContactFormSubmit);
     </script>
 </body>
 </html>
