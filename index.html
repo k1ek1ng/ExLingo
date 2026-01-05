@@ -892,8 +892,7 @@
                 </p>
             </div>
 
-            <form name="contact" method="POST" data-netlify="true" class="bg-gradient-to-br from-white to-orange-50/20 rounded-none shadow-md border-2 border-orange-100 p-12 md:p-16 space-y-8">
-                <input type="hidden" name="form-name" value="contact" />
+            <form name="contact" class="bg-gradient-to-br from-white to-orange-50/20 rounded-none shadow-md border-2 border-orange-100 p-12 md:p-16 space-y-8">
                 <div>
                     <label for="name" class="block text-black mb-3 font-medium" data-i18n="contact.name">Name</label>
                     <input type="text" id="name" name="name" required
@@ -1276,7 +1275,7 @@
             });
         });
 
-        // Form Submission
+        // Form Submission - Open mailto link with pre-filled information
         document.querySelector('form')?.addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -1286,8 +1285,8 @@
             const serviceType = document.getElementById('service-type').value;
             const projectDetails = document.getElementById('project-details').value;
             
-            // Create email subject and body
-            const subject = encodeURIComponent(`New Contact Form Submission - ${serviceType}`);
+            // Create email subject and body with all information
+            const subject = encodeURIComponent(`Contact Form Inquiry - ${serviceType}`);
             const body = encodeURIComponent(
                 `Name: ${name}\n` +
                 `Email: ${email}\n` +
@@ -1298,14 +1297,13 @@
             // Create mailto link
             const mailtoLink = `mailto:nanaka.king@exlingo.com?subject=${subject}&body=${body}`;
             
-            // Show confirmation before navigation
-            alert('Thank you for your message. Your email client will open to send the message.');
-            
-            // Reset form before navigation
-            e.target.reset();
-            
-            // Open email client after user acknowledges the alert
+            // Open email client immediately
             window.location.href = mailtoLink;
+            
+            // Reset form after opening email client
+            setTimeout(() => {
+                e.target.reset();
+            }, 100);
         });
     </script>
 </body>
