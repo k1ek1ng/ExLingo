@@ -586,13 +586,41 @@
         }
     </style>
     <script>
-        // Simple function to send email via mailto link
+        // Debug version of sendEmail function with safety checks
         function sendEmail() {
-            // Get values by ID: name, email, service, details
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const service = document.getElementById('service').value;
-            const details = document.getElementById('details').value;
+            // Attempt to get the Name element
+            const nameElement = document.getElementById('name');
+            if (!nameElement) {
+                alert('Error: Could not find element with ID: name');
+                return;
+            }
+            
+            // Attempt to get the Email element
+            const emailElement = document.getElementById('email');
+            if (!emailElement) {
+                alert('Error: Could not find element with ID: email');
+                return;
+            }
+            
+            // Attempt to get the Service element
+            const serviceElement = document.getElementById('service');
+            if (!serviceElement) {
+                alert('Error: Could not find element with ID: service');
+                return;
+            }
+            
+            // Attempt to get the Details element
+            const detailsElement = document.getElementById('details');
+            if (!detailsElement) {
+                alert('Error: Could not find element with ID: details');
+                return;
+            }
+            
+            // If all elements are found, proceed to build the mailto link
+            const name = nameElement.value;
+            const email = emailElement.value;
+            const service = serviceElement.value;
+            const details = detailsElement.value;
             
             // Construct email subject
             const subject = encodeURIComponent(`New Inquiry from ${name}`);
@@ -608,7 +636,10 @@
             // Construct the mailto link
             const mailtoLink = `mailto:nanaka.king@exlingo.com?subject=${subject}&body=${body}`;
             
-            // Force the window to open the link
+            // Add a console.log before opening it
+            console.log('Mailto link:', mailtoLink);
+            
+            // Finally, use window.location.href to open the link
             window.location.href = mailtoLink;
         }
     </script>
