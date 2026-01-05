@@ -892,7 +892,7 @@
                 </p>
             </div>
 
-            <form name="contact" class="bg-gradient-to-br from-white to-orange-50/20 rounded-none shadow-md border-2 border-orange-100 p-12 md:p-16 space-y-8">
+            <form id="contactForm" class="bg-gradient-to-br from-white to-orange-50/20 rounded-none shadow-md border-2 border-orange-100 p-12 md:p-16 space-y-8">
                 <div>
                     <label for="name" class="block text-black mb-3 font-medium" data-i18n="contact.name">Name</label>
                     <input type="text" id="name" name="name" required
@@ -1275,39 +1275,44 @@
             });
         });
 
-        // Form Submission - Open mailto link with pre-filled information
-        function handleContactFormSubmit(e) {
-            // Prevent the default form submission
-            e.preventDefault();
+        // Contact Form Submission Handler
+        document.getElementById('contactForm')?.addEventListener('submit', function(event) {
+            // CRITICAL: Prevent the default form submission to stop page reload
+            event.preventDefault();
             
-            // Grab values from form inputs
-            const name = document.getElementById('name').value.trim();
+            // Get values from the inputs
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
             const serviceType = document.getElementById('service-type').value;
-            const projectDetails = document.getElementById('project-details').value.trim();
+            const projectDetails = document.getElementById('project-details').value;
+            
+            // Use encodeURIComponent() on the values so special characters don't break the link
+            const encodedName = encodeURIComponent(name);
+            const encodedServiceType = encodeURIComponent(serviceType);
+            const encodedProjectDetails = encodeURIComponent(projectDetails);
             
             // Construct email subject
             const subject = encodeURIComponent(`New Inquiry from ${name}`);
             
-            // Construct email body with Service Type and Project Details clearly formatted
+            // Construct email body with all information
             const body = encodeURIComponent(
+                `Name: ${name}\n` +
+                `Email: ${email}\n` +
                 `Service Type: ${serviceType}\n\n` +
                 `Project Details:\n${projectDetails}`
             );
             
-            // Construct mailto link
+            // Construct the mailto link
             const mailtoLink = `mailto:nanaka.king@exlingo.com?subject=${subject}&body=${body}`;
             
-            // Open the user's default email client
+            // Trigger it using window.location.href
             window.location.href = mailtoLink;
             
             // Reset form after opening email client
             setTimeout(() => {
-                e.target.reset();
+                event.target.reset();
             }, 100);
-        }
-        
-        // Trigger function when 'Send Message' button is clicked
-        document.querySelector('form[name="contact"]')?.addEventListener('submit', handleContactFormSubmit);
+        });
     </script>
 </body>
 </html>
