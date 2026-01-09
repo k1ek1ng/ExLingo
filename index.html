@@ -584,64 +584,145 @@
             --tw-ring-color: #ea580c;
             box-shadow: 0 0 0 2px #ea580c;
         }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:hover {
+            color: #000;
+        }
     </style>
     <script>
-        // Debug version of sendEmail function with safety checks
-        function sendEmail() {
-            // Attempt to get the Name element
-            const nameElement = document.getElementById('name');
-            if (!nameElement) {
-                alert('Error: Could not find element with ID: name');
+        // Handle contact form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const contactForm = document.getElementById('contactForm');
+            const formMessage = document.getElementById('formMessage');
+            const sendBtn = document.getElementById('sendBtn');
+            
+            if (!contactForm) {
+                console.error('Contact form not found');
                 return;
             }
             
-            // Attempt to get the Email element
-            const emailElement = document.getElementById('email');
-            if (!emailElement) {
-                alert('Error: Could not find element with ID: email');
-                return;
+            contactForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const service = document.getElementById('service').value;
+                const details = document.getElementById('details').value.trim();
+                
+                // Validate required fields
+                if (!name || !email || !details) {
+                    showMessage('Please fill in all required fields.', 'error');
+                    return;
+                }
+                
+                // Disable button and show loading state
+                sendBtn.disabled = true;
+                sendBtn.innerHTML = '<span>Sending...</span>';
+                
+                try {
+                    // Send data to Netlify function
+                    const response = await fetch('/.netlify/functions/send-email', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name,
+                            email,
+                            service,
+                            details
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        // Success
+                        showMessage('Thank you! Your message has been sent successfully. We will get back to you soon.', 'success');
+                        contactForm.reset();
+                    } else {
+                        // Error from server
+                        showMessage('Sorry, there was an error sending your message. Please try again or email us directly at nanaka.king@exlingo.com', 'error');
+                        console.error('Server error:', data);
+                    }
+                } catch (error) {
+                    // Network or other error
+                    showMessage('Sorry, there was an error sending your message. Please try again or email us directly at nanaka.king@exlingo.com', 'error');
+                    console.error('Error:', error);
+                } finally {
+                    // Re-enable button
+                    sendBtn.disabled = false;
+                    sendBtn.innerHTML = '<span data-i18n="contact.sendMessage">Send Message</span><i data-lucide="send" class="w-5 h-5"></i>';
+                    // Re-initialize Lucide icons
+                    if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                    }
+                }
+            });
+            
+            function showMessage(message, type) {
+                formMessage.textContent = message;
+                formMessage.className = 'p-4 rounded-md mb-4';
+                
+                if (type === 'success') {
+                    formMessage.classList.add('bg-green-50', 'text-green-800', 'border', 'border-green-200');
+                } else {
+                    formMessage.classList.add('bg-red-50', 'text-red-800', 'border', 'border-red-200');
+                }
+                
+                formMessage.classList.remove('hidden');
+                
+                // Scroll to message
+                formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
-            
-            // Attempt to get the Service element
-            const serviceElement = document.getElementById('service');
-            if (!serviceElement) {
-                alert('Error: Could not find element with ID: service');
-                return;
-            }
-            
-            // Attempt to get the Details element
-            const detailsElement = document.getElementById('details');
-            if (!detailsElement) {
-                alert('Error: Could not find element with ID: details');
-                return;
-            }
-            
-            // If all elements are found, proceed to build the mailto link
-            const name = nameElement.value;
-            const email = emailElement.value;
-            const service = serviceElement.value;
-            const details = detailsElement.value;
-            
-            // Construct email subject
-            const subject = encodeURIComponent(`New Inquiry from ${name}`);
-            
-            // Construct email body
-            const body = encodeURIComponent(
-                `Name: ${name}\n` +
-                `Email: ${email}\n` +
-                `Service Type: ${service}\n\n` +
-                `Project Details:\n${details}`
-            );
-            
-            // Construct the mailto link
-            const mailtoLink = `mailto:nanaka.king@exlingo.com?subject=${subject}&body=${body}`;
-            
-            // Add a console.log before opening it
-            console.log('Mailto link:', mailtoLink);
-            
-            // Finally, use window.location.href to open the link
-            window.location.href = mailtoLink;
-        }
+        });
     </script>
 </head>
 <body class="washi-bg text-black antialiased" itemscope itemtype="https://schema.org/WebPage">
@@ -945,28 +1026,28 @@
             <div class="text-center mb-20">
                 <h2 class="mb-4 section-title-accent" data-i18n="contact.title">Contact</h2>
                 <div class="w-32 h-1 bg-gradient-to-r from-transparent via-[#ea580c] via-[#ea580c] to-transparent mx-auto mb-6"></div>
-                <p class="text-black leading-relaxed text-lg font-medium mb-4" data-i18n="contact.subheadline">
+                <p class="text-black leading-relaxed text-lg font-medium" data-i18n="contact.subheadline">
                     Available for depositions, trials, and corporate summits worldwide.
-                </p>
-                <p class="text-black leading-relaxed text-base font-medium" style="color: #ea580c;">
-                    The send message button is not working at the moment. Please reach out to <a href="mailto:nanaka.king@exlingo.com" class="underline">nanaka.king@exlingo.com</a>
                 </p>
             </div>
 
-            <div id="contact-container" class="bg-gradient-to-br from-white to-orange-50/20 rounded-none shadow-md border-2 border-orange-100 p-12 md:p-16 space-y-8">
+            <form id="contactForm" class="bg-gradient-to-br from-white to-orange-50/20 rounded-none shadow-md border-2 border-orange-100 p-12 md:p-16 space-y-8">
+                <!-- Success/Error Messages -->
+                <div id="formMessage" class="hidden p-4 rounded-md mb-4"></div>
+
                 <div>
                     <label for="name" class="block text-black mb-3 font-medium" data-i18n="contact.name">Name</label>
-                    <input type="text" id="name" class="w-full px-5 py-4 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 text-black">
+                    <input type="text" id="name" name="name" required class="w-full px-5 py-4 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 text-black">
                 </div>
 
                 <div>
                     <label for="email" class="block text-black mb-3 font-medium" data-i18n="contact.email">Email</label>
-                    <input type="email" id="email" class="w-full px-5 py-4 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 text-black">
+                    <input type="email" id="email" name="email" required class="w-full px-5 py-4 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 text-black">
                 </div>
 
                 <div>
                     <label for="service" class="block text-black mb-3 font-medium" data-i18n="contact.serviceType">Service Type</label>
-                    <select id="service" class="w-full px-5 py-4 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 text-black bg-white">
+                    <select id="service" name="service" class="w-full px-5 py-4 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 text-black bg-white">
                         <option value="" data-i18n="contact.selectService">Select a service...</option>
                         <option value="interpreting" data-i18n="contact.interpreting">Interpreting</option>
                         <option value="translation" data-i18n="contact.translation">Translation</option>
@@ -976,17 +1057,17 @@
 
                 <div>
                     <label for="details" class="block text-black mb-3 font-medium" data-i18n="contact.projectDetails">Project Details</label>
-                    <textarea id="details" rows="6" class="w-full px-5 py-4 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 resize-none text-black"></textarea>
+                    <textarea id="details" name="details" rows="6" required class="w-full px-5 py-4 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 resize-none text-black"></textarea>
                 </div>
 
                 <div class="pt-2">
-                    <button type="button" onclick="sendEmail()"
+                    <button type="submit" id="sendBtn"
                         class="w-full md:w-auto button-primary hover:opacity-90 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2.5 justify-center">
                         <span data-i18n="contact.sendMessage">Send Message</span>
                         <i data-lucide="send" class="w-5 h-5"></i>
                     </button>
                 </div>
-            </div>
+            </form>
         </div>
     </section>
 
