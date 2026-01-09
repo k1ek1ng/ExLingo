@@ -25,7 +25,7 @@ exports.handler = async (event, context) => {
 
     // Send email using Resend
     const { data, error } = await resend.emails.send({
-      from: 'ExLingo Contact <onboarding@resend.dev>',
+      from: 'ExLingo Website <noreply@exlingo.com>',
       to: 'nanaka.king@exlingo.com',
       subject: `New Inquiry from ${name}`,
       html: `
