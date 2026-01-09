@@ -639,8 +639,6 @@
         // Handle contact form submission
         document.addEventListener('DOMContentLoaded', function() {
             const contactForm = document.getElementById('contactForm');
-            const formMessage = document.getElementById('formMessage');
-            const sendBtn = document.getElementById('sendBtn');
             
             if (!contactForm) {
                 console.error('Contact form not found');
@@ -655,16 +653,6 @@
                 const email = document.getElementById('email').value.trim();
                 const service = document.getElementById('service').value;
                 const details = document.getElementById('details').value.trim();
-                
-                // Validate required fields
-                if (!name || !email || !details) {
-                    showMessage('Please fill in all required fields.', 'error');
-                    return;
-                }
-                
-                // Disable button and show loading state
-                sendBtn.disabled = true;
-                sendBtn.innerHTML = '<span>Sending...</span>';
                 
                 try {
                     // Send data to Netlify function
@@ -685,43 +673,18 @@
                     
                     if (response.ok) {
                         // Success
-                        showMessage('Thank you! Your message has been sent successfully. We will get back to you soon.', 'success');
+                        alert('Thank you! Your message has been sent successfully. We will get back to you soon.');
                         contactForm.reset();
                     } else {
                         // Error from server
-                        showMessage('Sorry, there was an error sending your message. Please try again or email us directly at nanaka.king@exlingo.com', 'error');
-                        console.error('Server error:', data);
+                        alert('Sorry, there was an error sending your message. Please try again or email us directly at nanaka.king@exlingo.com');
                     }
                 } catch (error) {
                     // Network or other error
-                    showMessage('Sorry, there was an error sending your message. Please try again or email us directly at nanaka.king@exlingo.com', 'error');
+                    alert('Sorry, there was an error sending your message. Please try again or email us directly at nanaka.king@exlingo.com');
                     console.error('Error:', error);
-                } finally {
-                    // Re-enable button
-                    sendBtn.disabled = false;
-                    sendBtn.innerHTML = '<span data-i18n="contact.sendMessage">Send Message</span><i data-lucide="send" class="w-5 h-5"></i>';
-                    // Re-initialize Lucide icons
-                    if (typeof lucide !== 'undefined') {
-                        lucide.createIcons();
-                    }
                 }
             });
-            
-            function showMessage(message, type) {
-                formMessage.textContent = message;
-                formMessage.className = 'p-4 rounded-md mb-4';
-                
-                if (type === 'success') {
-                    formMessage.classList.add('bg-green-50', 'text-green-800', 'border', 'border-green-200');
-                } else {
-                    formMessage.classList.add('bg-red-50', 'text-red-800', 'border', 'border-red-200');
-                }
-                
-                formMessage.classList.remove('hidden');
-                
-                // Scroll to message
-                formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
         });
     </script>
 </head>
