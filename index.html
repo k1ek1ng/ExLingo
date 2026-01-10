@@ -636,40 +636,42 @@
         }
     </style>
     <script>
-        document.getElementById('contactForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const statusMsg = document.getElementById('formStatus');
-            statusMsg.innerText = "Sending...";
-            statusMsg.style.color = "blue";
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('contactForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const statusMsg = document.getElementById('formStatus');
+                statusMsg.innerText = "Sending...";
+                statusMsg.style.color = "blue";
 
-            const formData = {
-                name: this.querySelector('[name="name"]').value,
-                email: this.querySelector('[name="email"]').value,
-                message: `Service: ${this.querySelector('[name="serviceType"]').value}\n\nDetails: ${this.querySelector('[name="message"]').value}`
-            };
-            
-            try {
-                const response = await fetch('/.netlify/functions/send-email', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData),
-                });
+                const formData = {
+                    name: this.querySelector('[name="name"]').value,
+                    email: this.querySelector('[name="email"]').value,
+                    message: `Service: ${this.querySelector('[name="serviceType"]').value}\n\nDetails: ${this.querySelector('[name="message"]').value}`
+                };
                 
-                if (response.ok) {
-                    statusMsg.innerText = "Message sent successfully!";
-                    statusMsg.style.color = "green";
-                    this.reset();
-                } else {
-                    const text = await response.text();
-                    console.error("Server Error:", text);
-                    statusMsg.innerText = "Error: " + text;
+                try {
+                    const response = await fetch('/.netlify/functions/send-email', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData),
+                    });
+                    
+                    if (response.ok) {
+                        statusMsg.innerText = "Message sent successfully!";
+                        statusMsg.style.color = "green";
+                        this.reset();
+                    } else {
+                        const text = await response.text();
+                        console.error("Server Error:", text);
+                        statusMsg.innerText = "Error: " + text;
+                        statusMsg.style.color = "red";
+                    }
+                } catch (error) {
+                    console.error("Network Error:", error);
+                    statusMsg.innerText = "Network Error. Check console.";
                     statusMsg.style.color = "red";
                 }
-            } catch (error) {
-                console.error("Network Error:", error);
-                statusMsg.innerText = "Network Error. Check console.";
-                statusMsg.style.color = "red";
-            }
+            });
         });
     </script>
 </head>
