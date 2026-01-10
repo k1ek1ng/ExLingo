@@ -1,7 +1,8 @@
 [build]
-  functions = "netlify/functions"
+  # This tells Netlify: "Do not try to compile anything, just use the files as they are."
+  command = "echo 'Build skipped'"
+  # This tells Netlify: "My website is right here in the main folder."
   publish = "."
-
-[[plugins]]
-  package = "@netlify/plugin-functions"
-
+[functions]
+  # This ensures Netlify finds the email code
+  directory = "netlify/functions"
