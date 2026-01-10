@@ -636,55 +636,40 @@
         }
     </style>
     <script>
-        // Handle contact form submission
-        document.addEventListener('DOMContentLoaded', function() {
-            const contactForm = document.getElementById('contactForm');
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const statusMsg = document.getElementById('formStatus');
+            statusMsg.innerText = "Sending...";
+            statusMsg.style.color = "blue";
+
+            const formData = {
+                name: this.querySelector('[name="name"]').value,
+                email: this.querySelector('[name="email"]').value,
+                message: `Service: ${this.querySelector('[name="serviceType"]').value}\n\nDetails: ${this.querySelector('[name="message"]').value}`
+            };
             
-            if (!contactForm) {
-                console.error('Contact form not found');
-                return;
-            }
-            
-            contactForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
+            try {
+                const response = await fetch('/.netlify/functions/send-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData),
+                });
                 
-                // Get form values
-                const name = document.getElementById('name').value.trim();
-                const email = document.getElementById('email').value.trim();
-                const service = document.getElementById('service').value;
-                const details = document.getElementById('details').value.trim();
-                
-                try {
-                    // Send data to Netlify function
-                    const response = await fetch('/.netlify/functions/send-email', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            name,
-                            email,
-                            service,
-                            details
-                        })
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (response.ok) {
-                        // Success
-                        alert('Thank you! Your message has been sent successfully. We will get back to you soon.');
-                        contactForm.reset();
-                    } else {
-                        // Error from server
-                        alert('Sorry, there was an error sending your message. Please try again or email us directly at nanaka.king@exlingo.com');
-                    }
-                } catch (error) {
-                    // Network or other error
-                    alert('Sorry, there was an error sending your message. Please try again or email us directly at nanaka.king@exlingo.com');
-                    console.error('Error:', error);
+                if (response.ok) {
+                    statusMsg.innerText = "Message sent successfully!";
+                    statusMsg.style.color = "green";
+                    this.reset();
+                } else {
+                    const text = await response.text();
+                    console.error("Server Error:", text);
+                    statusMsg.innerText = "Error: " + text;
+                    statusMsg.style.color = "red";
                 }
-            });
+            } catch (error) {
+                console.error("Network Error:", error);
+                statusMsg.innerText = "Network Error. Check console.";
+                statusMsg.style.color = "red";
+            }
         });
     </script>
 </head>
@@ -995,32 +980,31 @@
             </div>
 
             <form id="contactForm" class="bg-gradient-to-br from-white to-orange-50/20 rounded-none shadow-md border-2 border-orange-100 p-12 md:p-16 space-y-8">
-                <!-- Success/Error Messages -->
-                <div id="formMessage" class="hidden p-4 rounded-md mb-4"></div>
+                <!-- Status Message -->
+                <div id="formStatus" class="p-4 rounded-md mb-4"></div>
 
                 <div>
                     <label for="name" class="block text-black mb-3 font-medium" data-i18n="contact.name">Name</label>
-                    <input type="text" id="name" name="name" required class="w-full px-5 py-4 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 text-black">
+                    <input type="text" name="name" id="name" required class="w-full px-5 py-4 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 text-black">
                 </div>
 
                 <div>
                     <label for="email" class="block text-black mb-3 font-medium" data-i18n="contact.email">Email</label>
-                    <input type="email" id="email" name="email" required class="w-full px-5 py-4 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 text-black">
+                    <input type="email" name="email" id="email" required class="w-full px-5 py-4 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 text-black">
                 </div>
 
                 <div>
-                    <label for="service" class="block text-black mb-3 font-medium" data-i18n="contact.serviceType">Service Type</label>
-                    <select id="service" name="service" class="w-full px-5 py-4 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 text-black bg-white">
-                        <option value="" data-i18n="contact.selectService">Select a service...</option>
-                        <option value="interpreting" data-i18n="contact.interpreting">Interpreting</option>
-                        <option value="translation" data-i18n="contact.translation">Translation</option>
-                        <option value="both" data-i18n="contact.both">Both</option>
+                    <label for="serviceType" class="block text-black mb-3 font-medium" data-i18n="contact.serviceType">Service Type</label>
+                    <select name="serviceType" id="serviceType" class="w-full px-5 py-4 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 text-black bg-white">
+                        <option value="Translation">Translation</option>
+                        <option value="Interpretation">Interpretation</option>
+                        <option value="Localization">Localization</option>
                     </select>
                 </div>
 
                 <div>
-                    <label for="details" class="block text-black mb-3 font-medium" data-i18n="contact.projectDetails">Project Details</label>
-                    <textarea id="details" name="details" rows="6" required class="w-full px-5 py-4 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 resize-none text-black"></textarea>
+                    <label for="message" class="block text-black mb-3 font-medium" data-i18n="contact.projectDetails">Project Details</label>
+                    <textarea name="message" id="message" rows="6" required class="w-full px-5 py-4 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 resize-none text-black"></textarea>
                 </div>
 
                 <div class="pt-2">

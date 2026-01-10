@@ -13,10 +13,10 @@ exports.handler = async (event, context) => {
 
   try {
     // Parse the request body
-    const { name, email, service, details } = JSON.parse(event.body);
+    const { name, email, message } = JSON.parse(event.body);
 
     // Validate required fields
-    if (!name || !email || !details) {
+    if (!name || !email || !message) {
       return {
         statusCode: 400,
         body: JSON.stringify({ error: 'Missing required fields' })
@@ -32,19 +32,17 @@ exports.handler = async (event, context) => {
         <h2>New Contact Form Submission</h2>
         <p><strong>Name:</strong> ${name}</p>
         <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Service Type:</strong> ${service || 'Not specified'}</p>
-        <p><strong>Project Details:</strong></p>
-        <p>${details.replace(/\n/g, '<br>')}</p>
+        <p><strong>Message:</strong></p>
+        <p>${message.replace(/\n/g, '<br>')}</p>
       `,
       text: `
         New Contact Form Submission
         
         Name: ${name}
         Email: ${email}
-        Service Type: ${service || 'Not specified'}
         
-        Project Details:
-        ${details}
+        Message:
+        ${message}
       `
     });
 
