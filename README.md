@@ -6,12 +6,12 @@
 ![Resend](https://img.shields.io/badge/Resend-000000?style=for-the-badge&logo=resend&logoColor=white)
 ![Languages](https://img.shields.io/badge/Languages-English%20%7C%20Japanese-red)
 
-> **Live Demo:** [(https://exlingo.com/)]
+> **Live site:** [exlingo.com](https://exlingo.com/)
 
 ## 📖 Overview
-Exlingo is a commercial web platform designed and deployed for a professional Japanese-English interpretation and translation business. 
+Exlingo is a commercial web platform designed and deployed for a professional Japanese-English interpretation and translation business.
 
-The goal of this project was to digitize the client's business operations, moving from word-of-mouth referrals to a centralized digital presence. 
+The goal of this project was to digitize the client's business operations, moving from word-of-mouth referrals to a centralized digital presence.
 The platform serves as a portfolio of qualifications and a primary lead-generation funnel for new corporate clients.
 
 ## 🛠 Tech Stack
@@ -22,7 +22,7 @@ The platform serves as a portfolio of qualifications and a primary lead-generati
 * **Performance:** Semantic HTML for Accessibility (a11y) & SEO
 
 ## ☁️ Infrastructure & Deployment
-Unlike a standard student project, Exlingo is a production-grade application with fully managed infrastructure:
+Exlingo is a production application with fully managed infrastructure:
 * **DNS Management:** Configured custom domain records (A/CNAME) via **GoDaddy** to route traffic securely to the application.
 * **Email API:** Integrated **Resend** (API-based email infrastructure) to handle transactional emails. This ensures high deliverability rates for client inquiries, bypassing standard SMTP limitations.
 * **CI/CD Pipeline:** Deployed via **Netlify**. The site utilizes Continuous Deployment, automatically rebuilding and shipping production updates whenever code is pushed to the GitHub `main` branch.
@@ -45,6 +45,6 @@ Unlike a standard student project, Exlingo is a production-grade application wit
 * **UTF-8 Encoding:** Ensured full support for Japanese Kanji/Kana characters across all browsers and devices without encoding errors.
 * **User-Centric UX:** Implemented seamless language toggling that maintains user context and navigation flow.
 
-## 📸 Preview<img width="1470" height="956" alt="Screenshot 2026-01-13 at 3 51 26 PM" src="https://github.com/user-attachments/assets/70197aab-262f-45de-853d-60b26890fda7" />
+## 📸 Preview
 
-
+<img width="1470" height="956" alt="Exlingo homepage" src="https://github.com/user-attachments/assets/70197aab-262f-45de-853d-60b26890fda7" />
