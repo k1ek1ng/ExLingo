@@ -1,50 +1,42 @@
-# Exlingo | Professional Interpretation Services Platform
+# Exlingo
 
-![Project Status](https://img.shields.io/badge/Status-Live-success)
-![Client](https://img.shields.io/badge/Client-Professional_Services-blue)
-![Netlify](https://img.shields.io/badge/Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)
-![Resend](https://img.shields.io/badge/Resend-000000?style=for-the-badge&logo=resend&logoColor=white)
-![Languages](https://img.shields.io/badge/Languages-English%20%7C%20Japanese-red)
+A bilingual site for a Japanese-English interpretation business, built and
+deployed for a real client. Live at [exlingo.com](https://exlingo.com/).
 
-> **Live site:** [exlingo.com](https://exlingo.com/)
+The client ran on word-of-mouth referrals and had no web presence. The site is a
+credentials page and a contact funnel — that is the whole scope, and the scope is
+the reason it is a static site rather than an application.
 
-## 📖 Overview
-Exlingo is a commercial web platform designed and deployed for a professional Japanese-English interpretation and translation business.
+## Build
 
-The goal of this project was to digitize the client's business operations, moving from word-of-mouth referrals to a centralized digital presence.
-The platform serves as a portfolio of qualifications and a primary lead-generation funnel for new corporate clients.
+Static HTML with Tailwind, one Netlify function, deployed from `main` on push.
 
-## 🛠 Tech Stack
-* **Frontend:** HTML5, JavaScript (ES6+)
-* **Styling:** Tailwind CSS
-* **Infrastructure:** Netlify (CI/CD), GoDaddy (DNS Management)
-* **Backend/API:** Resend API (Transactional Email)
-* **Performance:** Semantic HTML for Accessibility (a11y) & SEO
+- **Bilingual (EN/JA)** — both languages are in the page and toggled client-side,
+  so a Japanese visitor lands on Japanese content at the same URL rather than a
+  redirect or a second site to maintain. The client updates copy in one file.
+- **Contact form** — posts to a Netlify function that sends through Resend from
+  the verified domain. Inquiries reach a business inbox instead of a `mailto:`
+  the client would have to notice.
+- **DNS** — custom domain on GoDaddy pointed at Netlify.
 
-## ☁️ Infrastructure & Deployment
-Exlingo is a production application with fully managed infrastructure:
-* **DNS Management:** Configured custom domain records (A/CNAME) via **GoDaddy** to route traffic securely to the application.
-* **Email API:** Integrated **Resend** (API-based email infrastructure) to handle transactional emails. This ensures high deliverability rates for client inquiries, bypassing standard SMTP limitations.
-* **CI/CD Pipeline:** Deployed via **Netlify**. The site utilizes Continuous Deployment, automatically rebuilding and shipping production updates whenever code is pushed to the GitHub `main` branch.
+## The contact form took five tries
 
-## ⚡️ Key Features & Engineering Decisions
+Worth recording, since it is most of this repo's history. The form went through a
+Netlify-forms version, a `mailto:` version, an inline `onclick` version, and a
+debug version with element validation and console logging before the working one.
+The bug that actually mattered was the least interesting: the script ran before
+the form existed in the DOM. Wrapping it in `DOMContentLoaded` fixed it.
 
-### 1. High-Performance Architecture
-* Designed with a "Mobile-First" approach to accommodate international clients accessing the site on various devices.
+While it was broken the site carried a visible notice telling visitors to email
+directly, because a contact form that silently drops inquiries is worse for a
+referral business than no form at all.
 
-### 2. Lead Generation Pipeline
-* Integrated a contact form system that routes business inquiries directly to the client's email.
-* Implemented client-side validation to reduce spam and ensure high-quality leads.
+## Layout
 
-### 3. SEO Optimization (Search Engine Optimization)
-* Structured the DOM with semantic tags (`<header>`, `<article>`, `<main>`) to maximize indexing by Google and Bing.
-* Optimized meta tags and keywords for "Japanese Interpretation" to capture niche search traffic.
-
-### 4. Internationalization (i18n) & Localization
-* **Bi-Directional Support:** Engineered a fully bilingual experience (English/Japanese) to cater to the client's international customer base.
-* **UTF-8 Encoding:** Ensured full support for Japanese Kanji/Kana characters across all browsers and devices without encoding errors.
-* **User-Centric UX:** Implemented seamless language toggling that maintains user context and navigation flow.
-
-## 📸 Preview
-
-<img width="1470" height="956" alt="Exlingo homepage" src="https://github.com/user-attachments/assets/70197aab-262f-45de-853d-60b26890fda7" />
+```
+index.html               # the site, both languages
+netlify/functions/
+  send-email.js          # contact form -> Resend
+privacy.html terms.html
+netlify.toml
+```
