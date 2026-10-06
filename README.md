@@ -1,35 +1,36 @@
 # Exlingo
 
-A bilingual site for a Japanese-English interpretation business, built and
-deployed for a real client. Live at [exlingo.com](https://exlingo.com/).
+A bilingual (English and Japanese) website for a Japanese-English interpretation
+business, built for a real client. Live at [exlingo.com](https://exlingo.com/).
 
-The client ran on word-of-mouth referrals and had no web presence. The site is a
-credentials page and a contact funnel — that is the whole scope, and the scope is
-the reason it is a static site rather than an application.
+The client got all her work through referrals and had no website. She needed a
+page showing her credentials and a way for new clients to contact her, so I kept
+it a static site.
 
-## Build
+## How it's built
 
-Static HTML with Tailwind, one Netlify function, deployed from `main` on push.
+Static HTML with Tailwind and one Netlify function. Pushing to `main` deploys it.
 
-- **Bilingual (EN/JA)** — both languages are in the page and toggled client-side,
-  so a Japanese visitor lands on Japanese content at the same URL rather than a
-  redirect or a second site to maintain. The client updates copy in one file.
-- **Contact form** — posts to a Netlify function that sends through Resend from
-  the verified domain. Inquiries reach a business inbox instead of a `mailto:`
-  the client would have to notice.
-- **DNS** — custom domain on GoDaddy pointed at Netlify.
+- **Two languages, one page.** Both languages live in `index.html` and a toggle
+  switches between them, so there's only one site to maintain.
+- **Contact form.** Submissions go to a Netlify function that emails the client
+  through Resend from her own domain.
+- **Domain.** Registered on GoDaddy and pointed at Netlify.
 
-## The contact form took five tries
+## The contact form
 
-Worth recording, since it is most of this repo's history. The form went through a
-Netlify-forms version, a `mailto:` version, an inline `onclick` version, and a
-debug version with element validation and console logging before the working one.
-The bug that actually mattered was the least interesting: the script ran before
-the form existed in the DOM. Wrapping it in `DOMContentLoaded` fixed it.
+It took five tries to get working: Netlify Forms, a `mailto:` link, an inline
+`onclick`, and a debug version full of console logs. The actual bug was simple.
+The script ran before the form existed on the page, and wrapping it in
+`DOMContentLoaded` fixed it. While the form was broken, the site showed a note
+asking visitors to email directly, so no inquiries got lost.
 
-While it was broken the site carried a visible notice telling visitors to email
-directly, because a contact form that silently drops inquiries is worse for a
-referral business than no form at all.
+Later I went back and found two security problems in my own code. The message
+was inserted into the email as raw HTML, and anyone could call the function in a
+loop to flood the client's inbox. The function now escapes all input, only
+accepts requests from the live site, limits field lengths, and uses a hidden
+honeypot field to drop bot submissions. It still has no real rate limit. That
+would need a CAPTCHA.
 
 ## Layout
 
